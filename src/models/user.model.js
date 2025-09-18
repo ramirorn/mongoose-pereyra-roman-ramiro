@@ -20,6 +20,10 @@ const UserSchema = new Schema(
       type: Types.ObjectId,
       ref: "ProfilePicture",
     },
+    isActive: {
+      type: Boolean,
+      default: true,
+    },
     person: {
       name: String,
       age: Number,

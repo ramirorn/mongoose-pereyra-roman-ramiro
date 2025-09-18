@@ -4,6 +4,10 @@ const ProfilePictureSchema = new Schema({
     type: String,
     required: true,
   },
+  exist: {
+    type: Boolean,
+    default: true,
+  },
   user: {
     type: Types.ObjectId,
     ref: "User",

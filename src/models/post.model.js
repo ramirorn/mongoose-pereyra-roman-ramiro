@@ -9,6 +9,10 @@ const PostSchema = new Schema({
     type: String,
     required: true,
   },
+  exist: {
+    type: Boolean,
+    default: true,
+  },
   author: {
     type: Types.ObjectId,
     ref: "User",

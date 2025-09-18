@@ -5,6 +5,10 @@ const GroupSchema = new Schema({
     type: String,
     required: true,
   },
+  isActive: {
+    type: Boolean,
+    default: true,
+  },
   members: [
     {
       type: Types.ObjectId,
