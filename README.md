@@ -437,4 +437,4 @@ export const createNewUserValidations = [
 
 ## Autor
 
-Pereyra Román Ramiro
+Pereyra Roman Ramiro
