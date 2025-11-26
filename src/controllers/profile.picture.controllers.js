@@ -1,4 +1,5 @@
 import { ProfilePictureModel } from "../models/profile.picture.model.js";
+import { UserModel } from "../models/user.model.js";
 
 // Creacion de un nuevo profile_picture
 export const createNewProfilePicture = async (req, res) => {
@@ -21,7 +22,7 @@ export const createNewProfilePicture = async (req, res) => {
 // Traer todos los profile_pictures
 export const getAllProfilePictures = async (req, res) => {
   try {
-    const profilePictures = await ProfilePictureModel.find();
+    const profilePictures = await ProfilePictureModel.find().populate('user');
     res.status(200).json({
       ok: true,
       data: profilePictures,
@@ -38,7 +39,7 @@ export const getAllProfilePictures = async (req, res) => {
 export const getProfilePictureById = async (req, res) => {
   const { id } = req.params;
   try {
-    const profilePicture = await ProfilePictureModel.findById(id);
+    const profilePicture = await ProfilePictureModel.findById(id).populate('user');
     res.status(200).json({
       ok: true,
       data: profilePicture,
@@ -81,14 +82,24 @@ export const updateProfilePicture = async (req, res) => {
 export const deleteProfilePicture = async (req, res) => {
   const { id } = req.params;
   try {
+    // Eliminacion logica del profile picture
     const deleted = await ProfilePictureModel.findByIdAndUpdate(
       id,
       { exist: false },
       { new: true }
     );
+
+    // Eliminacion en cascada: remover referencia en el usuario
+    if (deleted) {
+      await UserModel.updateMany(
+        { profile_picture: id },
+        { $unset: { profile_picture: "" } }
+      );
+    }
+
     return res.status(200).json({
       ok: true,
-      msg: "ProfilePicture borrado correctamente",
+      msg: "ProfilePicture borrado correctamente (eliminacion logica y en cascada aplicada)",
     });
   } catch (err) {
     return res.status(500).json({
