@@ -21,7 +21,7 @@ export const createNewPost = async (req, res) => {
 // Traer todos los posts
 export const getAllPosts = async (req, res) => {
   try {
-    const posts = await PostModel.find();
+    const posts = await PostModel.find().populate('author');
     res.status(200).json({
       ok: true,
       data: posts,
@@ -38,7 +38,7 @@ export const getAllPosts = async (req, res) => {
 export const getPostById = async (req, res) => {
   const { id } = req.params;
   try {
-    const post = await PostModel.findById(id);
+    const post = await PostModel.findById(id).populate('author');
     res.status(200).json({
       ok: true,
       data: post,
