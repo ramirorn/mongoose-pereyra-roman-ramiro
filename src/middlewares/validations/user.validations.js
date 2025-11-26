@@ -23,10 +23,11 @@ export const createNewUserValidations = [
       "La contraseña debe tener como minimo 5 caracteres y 20 como maximo"
     ),
   body("profile_picture")
+    .optional()
     .notEmpty()
     .withMessage("La foto de perfil debe ser incluida")
-    .isURL()
-    .withMessage("El enlace a la foto de perfil debe tener formato URL"),
+    .isMongoId()
+    .withMessage("El ID de la foto de perfil debe ser un ID de MongoDB valido"),
   body("isActive")
     .optional()
     .notEmpty("isActive no debe estar vacio")
@@ -86,8 +87,8 @@ export const updateUserValidations = [
     .optional()
     .notEmpty()
     .withMessage("La foto de perfil debe ser incluida")
-    .isURL()
-    .withMessage("El enlace a la foto de perfil debe tener formato URL"),
+    .isMongoId()
+    .withMessage("El ID de la foto de perfil debe ser un ID de MongoDB valido"),
   body("isActive")
     .optional()
     .notEmpty("isActive no debe estar vacio")
