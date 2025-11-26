@@ -21,7 +21,7 @@ export const createNewGroup = async (req, res) => {
 // Traer todos los groups
 export const getAllGroups = async (req, res) => {
   try {
-    const groups = await GroupModel.find();
+    const groups = await GroupModel.find().populate('members');
     res.status(200).json({
       ok: true,
       data: groups,
@@ -38,7 +38,7 @@ export const getAllGroups = async (req, res) => {
 export const getGroupById = async (req, res) => {
   const { id } = req.params;
   try {
-    const group = await GroupModel.findById(id);
+    const group = await GroupModel.findById(id).populate('members');
     res.status(200).json({
       ok: true,
       data: group,
@@ -89,6 +89,48 @@ export const deleteGroup = async (req, res) => {
     return res.status(200).json({
       ok: true,
       msg: "Group borrado correctamente",
+    });
+  } catch (err) {
+    return res.status(500).json({
+      ok: false,
+      msg: "Error interno del servidor",
+    });
+  }
+};
+
+// Agregar un miembro a un group (relacion N:M)
+export const addMemberToGroup = async (req, res) => {
+  const { id } = req.params;
+  const { userId } = req.body;
+  try {
+    // Verificar si el usuario ya esta en el grupo
+    const group = await GroupModel.findById(id);
+
+    if (!group) {
+      return res.status(404).json({
+        ok: false,
+        msg: "Grupo no encontrado",
+      });
+    }
+
+    if (group.members.includes(userId)) {
+      return res.status(400).json({
+        ok: false,
+        msg: "El usuario ya es miembro del grupo",
+      });
+    }
+
+    // Agregar el usuario al grupo
+    const updated = await GroupModel.findByIdAndUpdate(
+      id,
+      { $push: { members: userId } },
+      { new: true }
+    ).populate('members');
+
+    res.status(200).json({
+      ok: true,
+      msg: "Miembro agregado al grupo correctamente",
+      data: updated,
     });
   } catch (err) {
     return res.status(500).json({
